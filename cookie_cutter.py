@@ -90,8 +90,8 @@ if __name__ == '__main__':
 		height = 2.0
 		thickness = 0.25
 		sink = 0.125
-		x_res = 90
-		y_res = 60
+		x_res = 180
+		y_res = 120
 		print "creating mesh"
 		faces = create_cookie_cutter_box_mesh(img, width, height, thickness, sink, x_res, y_res)
 
