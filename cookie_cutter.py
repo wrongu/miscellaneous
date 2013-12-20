@@ -37,41 +37,41 @@ def create_cookie_cutter_box_mesh(img, width, height, thickness, depression, div
 	# right
 	faces.append((2,5,1))
 	faces.append((2,6,5))
-	# # create mesh of other points:
-	# for xi in range(div_w + 1):
-	# 	x = w * (float(xi) / float(div_w))
-	# 	px = int(im_w * (float(xi) / float(div_w)))
-	# 	if px >= im_w:
-	# 		px = im_w-1
-	# 	for yi in range(div_h + 1):
-	# 		y = h * (float(yi) / float(div_h))
-	# 		py = int(im_h * (float(yi) / float(div_h)))
+	# create mesh of other points:
+	for xi in range(div_w + 1):
+		x = w * (float(xi) / float(div_w))
+		px = int(im_w * (float(xi) / float(div_w)))
+		if px >= im_w:
+			px = im_w-1
+		for yi in range(div_h + 1):
+			y = h * (float(yi) / float(div_h))
+			py = int(im_h * (float(yi) / float(div_h)))
 
-	# 		if py >= im_h:
-	# 			py = im_h-1
-	# 		# depth is based on rgb
-	# 		z = t
-	# 		r,g,b = blurred.getpixel((px,py))
-	# 		light = (r + g + b) / 3.0
-	# 		if light > 128:
-	# 			z = t - d
+			if py >= im_h:
+				py = im_h-1
+			# depth is based on rgb
+			z = t
+			r,g,b = blurred.getpixel((px,py))
+			light = (r + g + b) / 3.0
+			if light > 128:
+				z = t - d
 
-	# 		pts.append((x, y, z))
+			pts.append((x, y, z))
 
-	# # add faces for all those points
+	# add faces for all those points
 
-	# def grid_to_pt_number(grid_x, grid_y):
-	# 	return 8 + div_h * grid_x + grid_y
+	def grid_to_pt_number(grid_x, grid_y):
+		return 8 + div_h * grid_x + grid_y
 
-	# for xi in range(div_w):
-	# 	for yi in range(div_h):
-	# 		bl = grid_to_pt_number(xi, yi)
-	# 		tl = grid_to_pt_number(xi, yi+1)
-	# 		br = grid_to_pt_number(xi+1, yi)
-	# 		tr = grid_to_pt_number(xi+1, yi+1)
-	# 		# add 2 triangles
-	# 		faces.append((bl, br, tr))
-	# 		faces.append((tr, tl, bl))
+	for xi in range(div_w):
+		for yi in range(div_h):
+			bl = grid_to_pt_number(xi, yi)
+			tl = grid_to_pt_number(xi, yi+1)
+			br = grid_to_pt_number(xi+1, yi)
+			tr = grid_to_pt_number(xi+1, yi+1)
+			# add 2 triangles
+			faces.append((bl, br, tr))
+			faces.append((tr, tl, bl))
 
 	return pts, faces
 
