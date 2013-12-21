@@ -1,8 +1,16 @@
 from PIL import Image, ImageFilter
 from sys import argv
 
-def create_cookie_cutter_box_mesh(img, width, height, thickness, depression, div_w, div_h):
-	blurred = img.filter(ImageFilter.BLUR)
+def create_cookie_cutter_box_mesh(img, width, height, thickness, depression, div_w, div_h, invert=False):
+
+	def z_value(px, py):
+		z = t if invert else t-d
+		r,g,b = img.getpixel((px,py))
+		light = (r + g + b) / 3.0
+		if light < 128:
+			z = t-d if invert else t
+		return z
+
 	im_w, im_h = img.size
 	w = width
 	h = height
@@ -18,10 +26,10 @@ def create_cookie_cutter_box_mesh(img, width, height, thickness, depression, div
 	corners.append((w, 0, 0))
 	corners.append((w, h, 0))
 	corners.append((0, h, 0))
-	corners.append((0, 0, t))
-	corners.append((w, 0, t))
-	corners.append((w, h, t))
-	corners.append((0, h, t))
+	corners.append((0, 0, z_value(1, 1)))
+	corners.append((w, 0, z_value(im_w-1, 1)))
+	corners.append((w, h, z_value(im_w-1, im_h-1)))
+	corners.append((0, h, z_value(1, im_h-1)))
 	# bottom
 	faces.append((0,1,2))
 	faces.append((0,2,3))
@@ -55,11 +63,7 @@ def create_cookie_cutter_box_mesh(img, width, height, thickness, depression, div
 			if py >= im_h:
 				py = im_h-1
 			# depth is based on rgb
-			z = t
-			r,g,b = blurred.getpixel((px,py))
-			light = (r + g + b) / 3.0
-			if light > 128:
-				z = t - d
+			z = z_value(px, py)
 
 			heightmap[(xi,yi)] = z
 
@@ -84,16 +88,17 @@ def create_cookie_cutter_box_mesh(img, width, height, thickness, depression, div
 if __name__ == '__main__':
 	if len(argv) > 1:
 		img = Image.open(argv[1])
+		w, h = img.size
 		# img.show()
 		# raw_input()
-		width = 3.0
-		height = 2.0
-		thickness = 0.25
-		sink = 0.125
-		x_res = 180
-		y_res = 120
+		width = 5.0
+		height = float(h) / float(w) * width
+		thickness = .25
+		sink = 0.08
+		x_res = 720
+		y_res = 480
 		print "creating mesh"
-		faces = create_cookie_cutter_box_mesh(img, width, height, thickness, sink, x_res, y_res)
+		faces = create_cookie_cutter_box_mesh(img, width, height, thickness, sink, x_res, y_res, invert=True)
 
 		outfile = "output.stl" if len(argv) < 3 else argv[2]
 		print "ASCII writing to", outfile
